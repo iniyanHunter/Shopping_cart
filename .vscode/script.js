@@ -151,11 +151,11 @@ function increaseQuantity(productId, productPrice) {
     if (quantity === 10) {
         const increaseBtn = document.querySelector(`#product-${productId} .quantity-controls button:nth-child(3)`);
         increaseBtn.disabled = true;
-        increaseBtn.style.backgroundColor = 'gray';  // Gray out the increase button
+        increaseBtn.style.backgroundColor = 'gray';  
     }
 
     const decreaseBtn = document.querySelector(`#product-${productId} .quantity-controls button:nth-child(1)`);
-    decreaseBtn.disabled = false;  // Enable decrease button when quantity is above 0
+    decreaseBtn.disabled = false; 
 }
 
 
@@ -176,13 +176,13 @@ function decreaseQuantity(productId, productPrice) {
         updateOrder(productId, productPrice, quantity);
 
         const increaseBtn = document.querySelector(`#product-${productId} .quantity-controls button:nth-child(3)`);
-        increaseBtn.disabled = false;  // Enable increase button when quantity is below 10
-        increaseBtn.style.backgroundColor = '';  // Reset the button color
+        increaseBtn.disabled = false;  
+        increaseBtn.style.backgroundColor = '';  
     }
 
     if (quantity === 0) {
         const decreaseBtn = document.querySelector(`#product-${productId} .quantity-controls button:nth-child(1)`);
-        decreaseBtn.disabled = true;  // Disable decrease button when quantity is 0
+        decreaseBtn.disabled = true; 
     }
 
     updateCheckoutButton();
