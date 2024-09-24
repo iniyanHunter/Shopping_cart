@@ -140,17 +140,29 @@ function addQuantity(productId) {
 function increaseQuantity(productId, productPrice) {
     const quantityInput = document.getElementById(`quantity-${productId}`);
     let quantity = parseInt(quantityInput.value);
-    quantity += 1;
-    quantityInput.value = quantity;
 
-    
-    updateOrder(productId, productPrice, quantity);
+    if (quantity < 10) {
+        quantity += 1;
+        quantityInput.value = quantity;
+
+        updateOrder(productId, productPrice, quantity);
+    }
+
+    if (quantity === 10) {
+        const increaseBtn = document.querySelector(`#product-${productId} .quantity-controls button:nth-child(3)`);
+        increaseBtn.disabled = true;
+        increaseBtn.style.backgroundColor = 'gray';  // Gray out the increase button
+    }
+
+    const decreaseBtn = document.querySelector(`#product-${productId} .quantity-controls button:nth-child(1)`);
+    decreaseBtn.disabled = false;  // Enable decrease button when quantity is above 0
 }
 
 
 function decreaseQuantity(productId, productPrice) {
     const quantityInput = document.getElementById(`quantity-${productId}`);
     let quantity = parseInt(quantityInput.value);
+
     if (quantity > 0) {
         quantity -= 1;
         quantityInput.value = quantity;
@@ -162,10 +174,19 @@ function decreaseQuantity(productId, productPrice) {
         }
 
         updateOrder(productId, productPrice, quantity);
-        updateCheckoutButton(); 
-    }
-}
 
+        const increaseBtn = document.querySelector(`#product-${productId} .quantity-controls button:nth-child(3)`);
+        increaseBtn.disabled = false;  // Enable increase button when quantity is below 10
+        increaseBtn.style.backgroundColor = '';  // Reset the button color
+    }
+
+    if (quantity === 0) {
+        const decreaseBtn = document.querySelector(`#product-${productId} .quantity-controls button:nth-child(1)`);
+        decreaseBtn.disabled = true;  // Disable decrease button when quantity is 0
+    }
+
+    updateCheckoutButton();
+}
 
 
 function updateOrder(productId, productPrice, quantity) {
@@ -236,9 +257,8 @@ function renderOrderSummary() {
     const grandTotalAmount = document.getElementById("grand-total-amount");
     const downloadButton = document.getElementById("download-btn");
 
-    orderItemsList.innerHTML = ""; 
+    orderItemsList.innerHTML = "";
 
-    
     order.orderItems.forEach(item => {
         const product = products.find(p => p.id === item.orderProductId);
         const itemDiv = document.createElement("div");
@@ -251,8 +271,26 @@ function renderOrderSummary() {
                 <input type="text" value="${item.orderProductCount}" readonly>
                 <button onclick="increaseQuantity(${item.orderProductId}, ${item.orderProductPrice})">+</button>
             </div>
-            <p>Total: ₹${item.orderProductTotal}</p>
+            <p>: ₹${item.orderProductTotal}</p>
         `;
+
+        const increaseBtn = itemDiv.querySelector('.quantity-controls-summary button:nth-child(3)');
+        const decreaseBtn = itemDiv.querySelector('.quantity-controls-summary button:nth-child(1)');
+
+        if (item.orderProductCount >= 10) {
+            increaseBtn.disabled = true;
+            increaseBtn.style.backgroundColor = 'gray';
+        } else {
+            increaseBtn.disabled = false;
+            increaseBtn.style.backgroundColor = ''; 
+        }
+
+        if (item.orderProductCount <= 0) {
+            decreaseBtn.disabled = true;
+        } else {
+            decreaseBtn.disabled = false;
+        }
+
         orderItemsList.appendChild(itemDiv);
     });
 
@@ -265,6 +303,7 @@ function renderOrderSummary() {
         downloadButton.disabled = true;
         downloadButton.style.backgroundColor = 'gray';
     }
+
     updateCheckoutButton();
 }
 
